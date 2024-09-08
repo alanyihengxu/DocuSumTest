@@ -1,5 +1,8 @@
 """EXAMPLES"""
 import apihelper
+from transformers import AutoProcessor, SeamlessM4Tv2Model
+import json
+import base64
 
 class huggingFaceAPis:
 
@@ -52,3 +55,21 @@ class huggingFaceAPis:
             "inputs": f"What is the sentiment of this? {text}"
         }
         return self.helper.closure(APIURL, payload)
+
+    #def readQuery(self, model, text):
+        print("Test2")
+        processor = AutoProcessor.from_pretrained("facebook/seamless-m4t-v2-large")
+        tts_model = SeamlessM4Tv2Model.from_pretrained("facebook/seamless-m4t-v2-large")
+        print("Test3")
+        text_inputs = processor(text = text, src_lang="eng", return_tensors="pt")
+        audio_array_from_text = tts_model.generate(**text_inputs, tgt_lang="eng")[0].cpu().numpy().squeeze()
+        print("Test4")
+
+        payload = {}
+        payload['content'] = base64.b64encode(audio_array_from_text)
+        payload['sample_rate'] = base64.b64encode(model.config.sampling_rate)
+
+        out = json.dumps(payload)
+        print("Test5")
+
+        return out

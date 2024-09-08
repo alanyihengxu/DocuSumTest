@@ -1,13 +1,20 @@
+import base64
 import fileinput
+import json
 import os
 
 from flask import Flask, redirect, render_template, request, session, flash
+import scipy
 import helpers
 import llmhelpers
 from llmhelpers import huggingFaceAPis
+from transformers import AutoProcessor, SeamlessM4Tv2Model
+
 app = Flask(__name__)
 UPLOAD_FOLDER = './uploads'
 app.secret_key = 'egjkerhgbhegfe'
+processor = AutoProcessor.from_pretrained("facebook/seamless-m4t-v2-large")
+tts_model = SeamlessM4Tv2Model.from_pretrained("facebook/seamless-m4t-v2-large")
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -41,6 +48,20 @@ def workspace():
             elif action == 'sentiment':
                 sentiment = huggingFaceAPis.sentimentQuery(model, extracted_text)
                 return render_template('workspace.html', results=sentiment, extracted_text=extracted_text)
+            elif action == 'read':
+                text_inputs = processor(text = extracted_text, src_lang="eng", return_tensors="pt")
+                audio_array_from_text = tts_model.generate(**text_inputs, tgt_lang="eng")[0].cpu().numpy().squeeze()
+                scipy.io.wavfile.write("static/audio.wav", rate=tts_model.config.sampling_rate, data=audio_array_from_text)
+                return render_template('workspace.html', results="/static/audio.wav", extracted_text=extracted_text)
+            #elif action == 'read':
+                print("Test1")
+                read = huggingFaceAPis.readQuery(model, extracted_text)
+                payload = json.loads(read)
+                file_data = base64.b64decode(payload['content'])
+                sample_rate = base64.b64decode(payload['sample_rate'])
+                scipy.io.wavfile.write("out_from_text.wav", rate=sample_rate, data=file_data)
+                print("Test6")
+                return render_template('workspace.html', results="Test", extracted_text=extracted_text)
             else:
                 flash('Invalid action.', 'error')
                 return redirect('workspace')

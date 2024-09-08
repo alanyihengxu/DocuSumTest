@@ -6,6 +6,7 @@
     "DISTILBERT": "https://api-inference.huggingface.co/models/distilbert-base-uncased-distilled-squad",
     "ROBERTA": "https://api-inference.huggingface.co/models/deepset/roberta-base-squad2",
     "MBART": "https://api-inference.huggingface.co/models/facebook/mbart-large-50-many-to-many-mmt",
-    "QT5": "potsawee/t5-large-generation-squad-QuestionAnswer"
+    "QT5": "potsawee/t5-large-generation-squad-QuestionAnswer",
+    "M4T": "https://api-inference.huggingface.co/models/facebook/seamless-m4t-v2-large"
   }
 }

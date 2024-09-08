@@ -239,6 +239,35 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Read Section -->
+                    <div class="accordion-item mb-3">
+                        <h2 class="accordion-header" id="headingRead">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseRead" aria-expanded="false" aria-controls="collapseRead">
+                                Read
+                            </button>
+                        </h2>
+                        <div id="collapseRead" class="accordion-collapse collapse" aria-labelledby="headingRead"
+                            data-bs-parent="#taskAccordion">
+                            <div class="accordion-body">
+                                <form method="post" enctype="multipart/form-data" id="readForm">
+                                    <div class="mb-3">
+                                        <label for="model" class="form-label">Model</label>
+                                        <select class="form-select" id="model" name="model">
+                                            <option>M4T</option>
+                                            <option>Model 2</option>
+                                        </select>
+                                    </div>
+                                    <div class="btn-group w-100" role="group">
+                                        <button class="btn btn-outline-danger" type="reset">Clear</button>
+                                        <button class="btn btn-primary" type="submit" name="action" value="read">Read</button>
+                                        <button class="btn btn-success" type="button" disabled>Download</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -261,7 +290,13 @@
                         <h3>Results</h3>
                         <div class="results-viewer">
                             {% if results %}
-                                <p>{{ results }}</p>
+                                {% if results == "/static/audio.wav" %}
+                                    <audio controls> 
+                                        <source src= {{ results }} /> 
+                                    </audio>
+                                {% else %}
+                                    <p>{{ results }}</p>
+                                {% endif %}
                             {% else %}
                                 <p>Results will appear here after processing.</p>
                             {% endif %}
